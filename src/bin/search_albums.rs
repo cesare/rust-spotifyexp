@@ -1,6 +1,14 @@
 use anyhow::{Context, Result};
 use reqwest::{Client};
 use serde_derive::Deserialize;
+use structopt::StructOpt;
+
+#[derive(StructOpt, Debug)]
+#[structopt(name = "search_albums")]
+struct Arguments {
+    #[structopt(short, long)]
+    query: String,
+}
 
 #[derive(Debug, Deserialize)]
 struct Artist {
@@ -54,9 +62,11 @@ fn spotify_access_token() -> Result<String> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let arguments = Arguments::from_args();
+
     let client = Client::new();
     let parameters = [
-        ("q", "pat metheny"),
+        ("q", arguments.query.as_str()),
         ("type", "album"),
         ("market", "from_token"),
         ("limit", "50"),
