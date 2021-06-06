@@ -36,11 +36,11 @@ pub struct SearchResponse {
 
 #[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
-    error: Error,
+    pub error: Error,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Error {
-    status: u32,
-    message: String,
+    pub status: u32,
+    pub message: String,
 }
