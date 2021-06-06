@@ -1,7 +1,9 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use reqwest::{Client};
 use serde_derive::Deserialize;
 use structopt::StructOpt;
+
+use spotifyexp::config::SpotifyConfig;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "search_albums")]
@@ -55,14 +57,10 @@ struct Error {
     message: String,
 }
 
-fn spotify_access_token() -> Result<String> {
-    std::env::var("SPOTIFY_ACCESS_TOKEN")
-        .with_context(|| "envvar SPOTIFY_ACCESS_TOKEN missing")
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let arguments = Arguments::from_args();
+    let config = SpotifyConfig::from_env()?;
 
     let client = Client::new();
     let parameters = [
@@ -71,9 +69,8 @@ async fn main() -> Result<()> {
         ("market", "from_token"),
         ("limit", "50"),
     ];
-    let token = spotify_access_token()?;
     let response = client.get("https://api.spotify.com/v1/search")
-        .header("Authorization", format!("Bearer {}", token))
+        .header("Authorization", format!("Bearer {}", config.access_token))
         .query(&parameters)
         .send()
         .await?;
