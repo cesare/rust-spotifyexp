@@ -36,7 +36,7 @@ impl SearchAlbums {
             ("limit", "50"),
         ];
         let response = client.get("https://api.spotify.com/v1/search")
-            .header("Authorization", format!("Bearer {}", self.config.access_token))
+            .bearer_auth(&self.config.access_token)
             .query(&parameters)
             .send()
             .await?;
