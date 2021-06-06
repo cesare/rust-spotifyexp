@@ -1,6 +1,8 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use reqwest::Client;
 use serde_derive::Deserialize;
+
+use spotifyexp::config::SpotifyConfig;
 
 #[derive(Debug, Deserialize)]
 struct TokenResponse {
@@ -9,28 +11,6 @@ struct TokenResponse {
     scope: String,
     expires_in: u32,
     refresh_token: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct SpotifyConfig {
-    #[serde(rename = "spotify_client_id")]
-    client_id: String,
-
-    #[serde(rename = "spotify_client_secret")]
-    client_secret: String,
-
-    #[serde(rename = "spotify_access_token")]
-    access_token: String,
-
-    #[serde(rename = "spotify_refresh_token")]
-    refresh_token: String,
-}
-
-impl SpotifyConfig {
-    fn from_env() -> Result<Self> {
-        envy::from_env::<Self>()
-            .with_context(|| "Failed to fetch configuration")
-    }
 }
 
 #[tokio::main]
