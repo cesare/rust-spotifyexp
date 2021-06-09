@@ -78,3 +78,31 @@ impl ListTracks {
         }
     }
 }
+
+pub struct ListDevices {
+    config: Rc<SpotifyConfig>,
+}
+
+impl ListDevices {
+    pub fn new(config: &Rc<SpotifyConfig>) -> Self {
+        Self {
+            config: config.clone(),
+        }
+    }
+
+    pub async fn execute(&self) -> Result<ListDevicesResponse> {
+        let client = Client::new();
+        let response = client.get("https://api.spotify.com/v1/me/player/devices")
+            .bearer_auth(&self.config.access_token)
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            response.json::<ListDevicesResponse>().await
+                .with_context(|| "Failed to parse response")
+        } else {
+            let e = response.json::<ErrorResponse>().await?;
+            bail!("Request failed: {}", e.error.message)
+        }
+    }
+}

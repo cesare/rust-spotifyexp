@@ -49,6 +49,23 @@ pub struct SearchResponse {
 pub type ListTracksResponse = Paging<Track>;
 
 #[derive(Debug, Deserialize)]
+pub struct ListDevicesResponse {
+    devices: Vec<Device>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Device {
+    id: String,
+    is_active: bool,
+    is_private_session: bool,
+    is_restricted: bool,
+    name: String,
+    #[serde(rename = "type")]
+    device_type: String,
+    volume_percent: u32,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
     pub error: Error,
 }
