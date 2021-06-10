@@ -106,3 +106,37 @@ impl ListDevices {
         }
     }
 }
+
+pub struct StartPlaying {
+    config: Rc<SpotifyConfig>,
+    device_id: String,
+}
+
+impl StartPlaying {
+    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str) -> Self {
+        Self {
+            config: config.clone(),
+            device_id: device_id.to_owned(),
+        }
+    }
+
+    pub async fn execute(&self) -> Result<()> {
+        let client = Client::new();
+        let parameters = [
+            ("device_id", &self.device_id),
+        ];
+        let response = client.put("https://api.spotify.com/v1/me/player/play")
+            .bearer_auth(&self.config.access_token)
+            .query(&parameters)
+            .header("Content-Type", "application/json")
+            .body("{}")
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(())
+        } else {
+            bail!("Request failed: {}", response.status())
+        }
+    }
+}
