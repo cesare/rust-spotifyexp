@@ -11,6 +11,9 @@ use spotifyexp::config::SpotifyConfig;
 struct Arguments {
     #[structopt(short, long)]
     device_id: String,
+
+    #[structopt(short, long)]
+    uri: Vec<String>,
 }
 
 #[tokio::main]
@@ -18,7 +21,7 @@ async fn main() -> Result<()> {
     let arguments = Arguments::from_args();
     let config = Rc::new(SpotifyConfig::from_env()?);
 
-    let response = StartPlaying::new(&config, &arguments.device_id).execute().await?;
+    let response = StartPlaying::new(&config, &arguments.device_id, &arguments.uri).execute().await?;
     println!("{:?}", response);
     Ok(())
 }
