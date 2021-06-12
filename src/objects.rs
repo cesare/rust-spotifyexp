@@ -10,12 +10,12 @@ pub struct Artist {
 
 #[derive(Debug, Deserialize)]
 pub struct Album {
-    id: String,
-    href: String,
-    artists: Vec<Artist>,
-    name: String,
-    release_date: String,
-    uri: String,
+    pub id: String,
+    pub href: String,
+    pub artists: Vec<Artist>,
+    pub name: String,
+    pub release_date: String,
+    pub uri: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -32,18 +32,18 @@ pub struct Track {
 
 #[derive(Debug, Deserialize)]
 pub struct Paging<T> {
-    href: String,
-    items: Vec<T>,
-    limit: u32,
-    offset: u32,
-    total: u32,
-    next: Option<String>,
-    previous: Option<String>,
+    pub href: String,
+    pub items: Vec<T>,
+    pub limit: u32,
+    pub offset: u32,
+    pub total: u32,
+    pub next: Option<String>,
+    pub previous: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct SearchResponse {
-    albums: Paging<Album>,
+    pub albums: Paging<Album>,
 }
 
 pub type ListTracksResponse = Paging<Track>;
