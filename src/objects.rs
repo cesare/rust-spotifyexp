@@ -20,14 +20,14 @@ pub struct Album {
 
 #[derive(Debug, Deserialize)]
 pub struct Track {
-    id: String,
-    href: String,
-    artists: Vec<Artist>,
-    name: String,
-    disc_number: u32,
-    track_number: u32,
-    duration_ms: u32,
-    uri: String,
+    pub id: String,
+    pub href: String,
+    pub artists: Vec<Artist>,
+    pub name: String,
+    pub disc_number: u32,
+    pub track_number: u32,
+    pub duration_ms: u32,
+    pub uri: String,
 }
 
 #[derive(Debug, Deserialize)]
