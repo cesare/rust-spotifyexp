@@ -20,7 +20,7 @@ impl SearchAlbums {
         }
     }
 
-    pub async fn execute(&self) -> Result<SearchResponse> {
+    pub async fn execute(&self) -> Result<SearchAlbumsResponse> {
         let client = Client::new();
         let parameters = [
             ("q", self.query.as_str()),
@@ -35,7 +35,7 @@ impl SearchAlbums {
             .await?;
 
         if response.status().is_success() {
-            response.json::<SearchResponse>().await
+            response.json::<SearchAlbumsResponse>().await
                 .with_context(|| "Failed to parse response")
         } else {
             let e = response.json::<ErrorResponse>().await?;

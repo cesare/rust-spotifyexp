@@ -5,7 +5,7 @@ use structopt::StructOpt;
 
 use spotifyexp::api::SearchAlbums;
 use spotifyexp::config::SpotifyConfig;
-use spotifyexp::objects::{SearchResponse, Album};
+use spotifyexp::objects::{SearchAlbumsResponse, Album};
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "search_albums")]
@@ -18,7 +18,7 @@ fn show_album(album: &Album) {
     println!("{} {}", album.uri, album.name);
 }
 
-fn show_results(response: &SearchResponse) {
+fn show_results(response: &SearchAlbumsResponse) {
     for album in response.albums.items.iter() {
         show_album(&album);
     }

@@ -42,7 +42,7 @@ pub struct Paging<T> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct SearchResponse {
+pub struct SearchAlbumsResponse {
     pub albums: Paging<Album>,
 }
 
