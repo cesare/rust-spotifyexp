@@ -2,10 +2,10 @@ use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Artist {
-    id: String,
-    href: String,
-    name: String,
-    uri: String,
+    pub id: String,
+    pub href: String,
+    pub name: String,
+    pub uri: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -44,6 +44,11 @@ pub struct Paging<T> {
 #[derive(Debug, Deserialize)]
 pub struct SearchResponse {
     pub albums: Paging<Album>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SearchArtistsResponse {
+    pub artists: Paging<Artist>,
 }
 
 pub type ListTracksResponse = Paging<Track>;
