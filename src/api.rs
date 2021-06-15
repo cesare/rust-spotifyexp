@@ -148,15 +148,15 @@ impl ListDevices {
 pub struct StartPlaying {
     config: Rc<SpotifyConfig>,
     device_id: String,
-    uris: Vec<String>,
+    uri: String,
 }
 
 impl StartPlaying {
-    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str, uris: &Vec<String>) -> Self {
+    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Self {
         Self {
             config: config.clone(),
             device_id: device_id.to_owned(),
-            uris: uris.clone(),
+            uri: uri.to_owned(),
         }
     }
 
@@ -166,14 +166,50 @@ impl StartPlaying {
             ("device_id", &self.device_id),
         ];
         let body = json!({
-            "uris": self.uris,
+            "uris": vec![self.uri.to_owned()],
         });
-        println!("request: {}", body.to_string());
         let response = client.put("https://api.spotify.com/v1/me/player/play")
             .bearer_auth(&self.config.access_token)
             .query(&parameters)
             .header("Content-Type", "application/json")
             .body(body.to_string())
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(())
+        } else {
+            bail!("Request failed: {}", response.status())
+        }
+    }
+}
+
+pub struct EnqueueTrack {
+    config: Rc<SpotifyConfig>,
+    device_id: String,
+    uri: String,
+}
+
+impl EnqueueTrack {
+    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Self {
+        Self {
+            config: config.clone(),
+            device_id: device_id.to_owned(),
+            uri: uri.to_owned(),
+        }
+    }
+
+    pub async fn execute(&self) -> Result<()> {
+        let client = Client::new();
+        let parameters = [
+            ("device_id", &self.device_id),
+            ("uri", &self.uri),
+        ];
+        let response = client.post("https://api.spotify.com/v1/me/player/queue")
+            .bearer_auth(&self.config.access_token)
+            .query(&parameters)
+            .header("Content-Type", "application/json")
+            .body("{}")
             .send()
             .await?;
 
