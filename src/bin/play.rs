@@ -7,7 +7,7 @@ use spotifyexp::api::{EnqueueTrack, StartPlaying};
 use spotifyexp::config::SpotifyConfig;
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "album_tracks")]
+#[structopt(name = "play")]
 struct Arguments {
     #[structopt(short, long)]
     device_id: String,
