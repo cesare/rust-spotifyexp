@@ -2,7 +2,6 @@ use std::rc::Rc;
 
 use anyhow::{Context, Result, bail};
 use reqwest::Client;
-use serde_json::json;
 
 use crate::config::SpotifyConfig;
 use crate::objects::*;
@@ -148,15 +147,13 @@ impl ListDevices {
 pub struct StartPlaying {
     config: Rc<SpotifyConfig>,
     device_id: String,
-    uri: String,
 }
 
 impl StartPlaying {
-    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Self {
+    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str) -> Self {
         Self {
             config: config.clone(),
             device_id: device_id.to_owned(),
-            uri: uri.to_owned(),
         }
     }
 
@@ -165,14 +162,11 @@ impl StartPlaying {
         let parameters = [
             ("device_id", &self.device_id),
         ];
-        let body = json!({
-            "uris": vec![self.uri.to_owned()],
-        });
         let response = client.put("https://api.spotify.com/v1/me/player/play")
             .bearer_auth(&self.config.access_token)
             .query(&parameters)
             .header("Content-Type", "application/json")
-            .body(body.to_string())
+            .body("{}")
             .send()
             .await?;
 

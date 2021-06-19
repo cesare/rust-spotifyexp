@@ -21,17 +21,15 @@ async fn main() -> Result<()> {
     let arguments = Arguments::from_args();
     let config = Rc::new(SpotifyConfig::from_env()?);
 
-    let response = StartPlaying::new(&config, &arguments.device_id, &arguments.uri[0])
-        .execute()
-        .await?;
-    println!("{:?}", response);
-
-    for uri in arguments.uri.iter().skip(1) {
-        let response = EnqueueTrack::new(&config, &arguments.device_id, &uri)
+    for uri in arguments.uri.iter() {
+        EnqueueTrack::new(&config, &arguments.device_id, &uri)
             .execute()
             .await?;
-        println!("{:?}", response);
     }
+
+    StartPlaying::new(&config, &arguments.device_id)
+        .execute()
+        .await?;
 
     Ok(())
 }
