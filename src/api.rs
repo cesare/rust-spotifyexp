@@ -144,6 +144,37 @@ impl ListDevices {
     }
 }
 
+pub struct GetCurrentlyPlayingTrack {
+    config: Rc<SpotifyConfig>,
+}
+
+impl GetCurrentlyPlayingTrack {
+    pub fn new(config: &Rc<SpotifyConfig>) -> Self {
+        Self {
+            config: config.clone(),
+        }
+    }
+
+    pub async fn execute(&self) -> Result<CurrentlyPlayingTrackResponse> {
+        let client = Client::new();
+        let parameters = [
+            ("market", "from_token"),
+        ];
+        let response = client.get("https://api.spotify.com/v1/me/player/currently-playing")
+            .bearer_auth(&self.config.access_token)
+            .query(&parameters)
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            response.json::<CurrentlyPlayingTrackResponse>().await
+                .with_context(|| "Failed to parse response")
+        } else {
+            bail!("Request failed: {}", response.status())
+        }
+    }
+}
+
 pub struct StartPlaying {
     config: Rc<SpotifyConfig>,
     device_id: String,

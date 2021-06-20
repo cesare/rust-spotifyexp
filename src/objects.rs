@@ -71,6 +71,13 @@ pub struct Device {
 }
 
 #[derive(Debug, Deserialize)]
+pub struct CurrentlyPlayingTrackResponse {
+    timestamp: u64,
+    is_playing: bool,
+    currently_playing_type: String,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
     pub error: Error,
 }
