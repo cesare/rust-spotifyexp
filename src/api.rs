@@ -245,3 +245,35 @@ impl EnqueueTrack {
         }
     }
 }
+
+pub struct SkipToNextTrack {
+    config: Rc<SpotifyConfig>,
+    device_id: String,
+}
+
+impl SkipToNextTrack {
+    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str) -> Self {
+        Self {
+            config: config.clone(),
+            device_id: device_id.to_owned(),
+        }
+    }
+
+    pub async fn execute(&self) -> Result<()> {
+        let client = Client::new();
+        let parameters = [
+            ("device_id", &self.device_id),
+        ];
+        let response = client.post("https://api.spotify.com/v1/me/player/next")
+            .bearer_auth(&self.config.access_token)
+            .form(&parameters)
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(())
+        } else {
+            bail!("Request failed: {}", response.status())
+        }
+    }
+}
