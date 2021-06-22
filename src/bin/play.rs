@@ -21,6 +21,16 @@ async fn is_playing(config: &Rc<SpotifyConfig>) -> Result<bool> {
     Ok(response.is_playing)
 }
 
+async fn enqueue_tracks(config: &Rc<SpotifyConfig>, device_id: &str, track_uris: Vec<String>) -> Result<()> {
+    for uri in track_uris.iter() {
+        EnqueueTrack::new(&config, device_id, &uri)
+            .execute()
+            .await?;
+    }
+
+    Ok(())
+}
+
 async fn skip_to_next(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
     SkipToNextTrack::new(config, device_id)
         .execute()
@@ -38,11 +48,7 @@ async fn main() -> Result<()> {
     let arguments = Arguments::from_args();
     let config = Rc::new(SpotifyConfig::from_env()?);
 
-    for uri in arguments.uri.iter() {
-        EnqueueTrack::new(&config, &arguments.device_id, &uri)
-            .execute()
-            .await?;
-    }
+    enqueue_tracks(&config, &arguments.device_id, arguments.uri).await?;
 
     let playing = is_playing(&config).await?;
     skip_to_next(&config, &arguments.device_id).await?;
