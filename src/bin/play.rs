@@ -3,7 +3,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use structopt::StructOpt;
 
-use spotifyexp::api::{EnqueueTrack, GetCurrentlyPlayingTrack, SkipToNextTrack, StartPlaying};
+use spotifyexp::api::{enqueue_tracks, is_playing, skip_to_next, start_playing};
 use spotifyexp::config::SpotifyConfig;
 
 #[derive(StructOpt, Debug)]
@@ -14,33 +14,6 @@ struct Arguments {
 
     #[structopt(short, long)]
     uri: Vec<String>,
-}
-
-async fn is_playing(config: &Rc<SpotifyConfig>) -> Result<bool> {
-    let response = GetCurrentlyPlayingTrack::new(config).execute().await?;
-    Ok(response.is_playing)
-}
-
-async fn enqueue_tracks(config: &Rc<SpotifyConfig>, device_id: &str, track_uris: Vec<String>) -> Result<()> {
-    for uri in track_uris.iter() {
-        EnqueueTrack::new(&config, device_id, &uri)
-            .execute()
-            .await?;
-    }
-
-    Ok(())
-}
-
-async fn skip_to_next(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
-    SkipToNextTrack::new(config, device_id)
-        .execute()
-        .await
-}
-
-async fn start_playing(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
-    StartPlaying::new(&config, &device_id)
-        .execute()
-        .await
 }
 
 #[tokio::main]
