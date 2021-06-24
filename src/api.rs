@@ -7,7 +7,7 @@ use crate::config::SpotifyConfig;
 use crate::objects::*;
 
 mod player;
-use self::player::*;
+pub use self::player::{enqueue_tracks, is_playing, skip_to_next, start_playing};
 
 pub struct SearchAlbums {
     config: Rc<SpotifyConfig>,
@@ -145,32 +145,4 @@ impl ListDevices {
             bail!("Request failed: {}", e.error.message)
         }
     }
-}
-
-
-pub async fn is_playing(config: &Rc<SpotifyConfig>) -> Result<bool> {
-    let response = GetCurrentlyPlayingTrack::new(config).execute().await?;
-    Ok(response.is_playing)
-}
-
-pub async fn enqueue_tracks(config: &Rc<SpotifyConfig>, device_id: &str, track_uris: Vec<String>) -> Result<()> {
-    for uri in track_uris.iter() {
-        EnqueueTrack::new(&config, device_id, &uri)
-            .execute()
-            .await?;
-    }
-
-    Ok(())
-}
-
-pub async fn skip_to_next(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
-    SkipToNextTrack::new(config, device_id)
-        .execute()
-        .await
-}
-
-pub async fn start_playing(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
-    StartPlaying::new(&config, &device_id)
-        .execute()
-        .await
 }
