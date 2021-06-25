@@ -6,40 +6,35 @@ use reqwest::Client;
 use crate::config::SpotifyConfig;
 use crate::objects::*;
 
-mod player;
-pub use self::player::{enqueue_tracks, is_playing, skip_to_next, start_playing};
-
-mod search;
-pub use self::search::{SearchAlbums, SearchArtists};
-
-pub struct ListTracks {
+pub struct SearchAlbums {
     config: Rc<SpotifyConfig>,
-    album_id: String,
+    query: String,
 }
 
-impl ListTracks {
-    pub fn new(config: &Rc<SpotifyConfig>, album_id: &str) -> Self {
+impl SearchAlbums {
+    pub fn new(config: &Rc<SpotifyConfig>, query: &str) -> Self {
         Self {
             config: config.clone(),
-            album_id: album_id.to_owned(),
+            query: query.to_owned(),
         }
     }
 
-    pub async fn execute(&self) -> Result<ListTracksResponse> {
+    pub async fn execute(&self) -> Result<SearchAlbumsResponse> {
         let client = Client::new();
-        let request_uri = format!("https://api.spotify.com/v1/albums/{}/tracks", self.album_id);
         let parameters = [
+            ("q", self.query.as_str()),
+            ("type", "album"),
             ("market", "from_token"),
             ("limit", "50"),
         ];
-        let response = client.get(request_uri)
+        let response = client.get("https://api.spotify.com/v1/search")
             .bearer_auth(&self.config.access_token)
             .query(&parameters)
             .send()
             .await?;
 
         if response.status().is_success() {
-            response.json::<ListTracksResponse>().await
+            response.json::<SearchAlbumsResponse>().await
                 .with_context(|| "Failed to parse response")
         } else {
             let e = response.json::<ErrorResponse>().await?;
@@ -48,26 +43,35 @@ impl ListTracks {
     }
 }
 
-pub struct ListDevices {
+pub struct SearchArtists {
     config: Rc<SpotifyConfig>,
+    query: String,
 }
 
-impl ListDevices {
-    pub fn new(config: &Rc<SpotifyConfig>) -> Self {
+impl SearchArtists {
+    pub fn new(config: &Rc<SpotifyConfig>, query: &str) -> Self {
         Self {
             config: config.clone(),
+            query: query.to_owned(),
         }
     }
 
-    pub async fn execute(&self) -> Result<ListDevicesResponse> {
+    pub async fn execute(&self) -> Result<SearchArtistsResponse> {
         let client = Client::new();
-        let response = client.get("https://api.spotify.com/v1/me/player/devices")
+        let parameters = [
+            ("q", self.query.as_str()),
+            ("type", "artist"),
+            ("market", "from_token"),
+            ("limit", "50"),
+        ];
+        let response = client.get("https://api.spotify.com/v1/search")
             .bearer_auth(&self.config.access_token)
+            .query(&parameters)
             .send()
             .await?;
 
         if response.status().is_success() {
-            response.json::<ListDevicesResponse>().await
+            response.json::<SearchArtistsResponse>().await
                 .with_context(|| "Failed to parse response")
         } else {
             let e = response.json::<ErrorResponse>().await?;
