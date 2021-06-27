@@ -6,20 +6,20 @@ use reqwest::Client;
 use crate::config::SpotifyConfig;
 use crate::objects::*;
 
-pub struct ListTracks {
+struct ListTracks {
     config: Rc<SpotifyConfig>,
     album_id: String,
 }
 
 impl ListTracks {
-    pub fn new(config: &Rc<SpotifyConfig>, album_id: &str) -> Self {
+    fn new(config: &Rc<SpotifyConfig>, album_id: &str) -> Self {
         Self {
             config: config.clone(),
             album_id: album_id.to_owned(),
         }
     }
 
-    pub async fn execute(&self) -> Result<ListTracksResponse> {
+    async fn execute(&self) -> Result<ListTracksResponse> {
         let client = Client::new();
         let request_uri = format!("https://api.spotify.com/v1/albums/{}/tracks", self.album_id);
         let parameters = [
@@ -40,4 +40,10 @@ impl ListTracks {
             bail!("Request failed: {}", e.error.message)
         }
     }
+}
+
+pub async fn list_tracks(config: &Rc<SpotifyConfig>, album_id: &str) -> Result<ListTracksResponse> {
+    ListTracks::new(&config, &album_id)
+        .execute()
+        .await
 }

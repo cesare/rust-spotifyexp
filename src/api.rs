@@ -5,4 +5,4 @@ mod search;
 pub use self::search::{SearchAlbums, SearchArtists};
 
 mod tracks;
-pub use self::tracks::{ListTracks};
+pub use self::tracks::{list_tracks};
