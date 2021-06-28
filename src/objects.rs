@@ -77,6 +77,24 @@ pub struct CurrentlyPlayingTrackResponse {
     pub currently_playing_type: String,
 }
 
+pub type GetPlaylistsResponse = Paging<Playlist>;
+
+#[derive(Debug, Deserialize)]
+pub struct Playlist {
+    pub id: String,
+    pub description: String,
+    pub href: String,
+    pub name: String,
+    pub tracks: PlaylistTracksRef,
+    pub uri: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct PlaylistTracksRef {
+    pub href: String,
+    pub total: u32,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
     pub error: Error,
