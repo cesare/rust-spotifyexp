@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use anyhow::{Context, Result, bail};
 use reqwest::Client;
+use serde_json::json;
 
 use crate::config::SpotifyConfig;
 use crate::objects::{CurrentlyPlayingTrackResponse, ErrorResponse, ListDevicesResponse};
@@ -88,6 +89,45 @@ impl StartPlaying {
             .query(&parameters)
             .header("Content-Type", "application/json")
             .body("{}")
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(())
+        } else {
+            bail!("Request failed: {}", response.status())
+        }
+    }
+}
+
+struct PlaybackPlaylist {
+    config: Rc<SpotifyConfig>,
+    device_id: String,
+    uri: String,
+}
+
+impl PlaybackPlaylist {
+    pub fn new(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Self {
+        Self {
+            config: config.clone(),
+            device_id: device_id.to_owned(),
+            uri: uri.to_owned(),
+        }
+    }
+
+    pub async fn execute(&self) -> Result<()> {
+        let client = Client::new();
+        let parameters = [
+            ("device_id", &self.device_id),
+        ];
+        let body = json!({
+            "context_uri": self.uri,
+        });
+        let response = client.put("https://api.spotify.com/v1/me/player/play")
+            .bearer_auth(&self.config.access_token)
+            .query(&parameters)
+            .header("Content-Type", "application/json")
+            .body(body.to_string())
             .send()
             .await?;
 
@@ -191,6 +231,12 @@ pub async fn skip_to_next(config: &Rc<SpotifyConfig>, device_id: &str) -> Result
 
 pub async fn start_playing(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
     StartPlaying::new(&config, &device_id)
+        .execute()
+        .await
+}
+
+pub async fn playback_playlist(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Result<()> {
+    PlaybackPlaylist::new(&config, &device_id, &uri)
         .execute()
         .await
 }
