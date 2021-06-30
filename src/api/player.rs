@@ -100,13 +100,13 @@ impl StartPlaying {
     }
 }
 
-struct PlaybackPlaylist {
+struct Playback {
     config: Rc<SpotifyConfig>,
     device_id: String,
     uri: String,
 }
 
-impl PlaybackPlaylist {
+impl Playback {
     pub fn new(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Self {
         Self {
             config: config.clone(),
@@ -235,8 +235,8 @@ pub async fn start_playing(config: &Rc<SpotifyConfig>, device_id: &str) -> Resul
         .await
 }
 
-pub async fn playback_playlist(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Result<()> {
-    PlaybackPlaylist::new(&config, &device_id, &uri)
+pub async fn playback(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Result<()> {
+    Playback::new(&config, &device_id, &uri)
         .execute()
         .await
 }

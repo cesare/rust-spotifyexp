@@ -3,7 +3,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use structopt::StructOpt;
 
-use spotifyexp::api::playback_playlist;
+use spotifyexp::api::playback;
 use spotifyexp::config::SpotifyConfig;
 
 #[derive(StructOpt, Debug)]
@@ -21,5 +21,5 @@ async fn main() -> Result<()> {
     let arguments = Arguments::from_args();
     let config = Rc::new(SpotifyConfig::from_env()?);
 
-    playback_playlist(&config, &arguments.device_id, &arguments.uri).await
+    playback(&config, &arguments.device_id, &arguments.uri).await
 }
