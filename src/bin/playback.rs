@@ -7,7 +7,7 @@ use spotifyexp::api::playback_playlist;
 use spotifyexp::config::SpotifyConfig;
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "playback_playlist")]
+#[structopt(name = "playback")]
 struct Arguments {
     #[structopt(short, long)]
     device_id: String,
