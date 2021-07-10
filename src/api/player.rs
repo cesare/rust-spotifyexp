@@ -208,6 +208,39 @@ impl SkipToNextTrack {
     }
 }
 
+struct PausePlayback {
+    config: Rc<SpotifyConfig>,
+    device_id: String,
+}
+
+impl PausePlayback {
+    fn new(config: &Rc<SpotifyConfig>, device_id: &str) -> Self {
+        Self {
+            config: config.clone(),
+            device_id: device_id.to_owned(),
+        }
+    }
+
+    async fn execute(&self) -> Result<()> {
+        let client = Client::new();
+        let parameters = [
+            ("device_id", &self.device_id),
+        ];
+        let response = client.put("https://api.spotify.com/v1/me/player/pause")
+            .bearer_auth(&self.config.access_token)
+            .query(&parameters)
+            .body("{}")
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(())
+        } else {
+            bail!("Request failed: {}", response.status())
+        }
+    }
+}
+
 pub async fn is_playing(config: &Rc<SpotifyConfig>) -> Result<bool> {
     let response = GetCurrentlyPlayingTrack::new(config).execute().await?;
     Ok(response.is_playing)
@@ -237,6 +270,12 @@ pub async fn start_playing(config: &Rc<SpotifyConfig>, device_id: &str) -> Resul
 
 pub async fn playback(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Result<()> {
     Playback::new(&config, &device_id, &uri)
+        .execute()
+        .await
+}
+
+pub async fn pause(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
+    PausePlayback::new(&config, &device_id)
         .execute()
         .await
 }
