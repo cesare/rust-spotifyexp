@@ -241,6 +241,12 @@ impl PausePlayback {
     }
 }
 
+pub async fn get_currently_playing_track(config: &Rc<SpotifyConfig>) -> Result<CurrentlyPlayingTrackResponse> {
+    GetCurrentlyPlayingTrack::new(config)
+        .execute()
+        .await
+}
+
 pub async fn is_playing(config: &Rc<SpotifyConfig>) -> Result<bool> {
     let response = GetCurrentlyPlayingTrack::new(config).execute().await?;
     Ok(response.is_playing)
