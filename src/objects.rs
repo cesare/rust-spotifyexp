@@ -75,6 +75,14 @@ pub struct CurrentlyPlayingTrackResponse {
     pub timestamp: u64,
     pub is_playing: bool,
     pub currently_playing_type: String,
+    pub item: CurrentlyPlayingItem,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CurrentlyPlayingItem {
+    pub album: Option<Album>,
+    pub artists: Vec<Artist>,
+    pub name: String,
 }
 
 pub type GetPlaylistsResponse = Paging<Playlist>;
