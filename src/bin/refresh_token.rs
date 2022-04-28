@@ -7,9 +7,6 @@ use spotifyexp::config::SpotifyConfig;
 #[derive(Debug, Deserialize)]
 struct TokenResponse {
     access_token: String,
-    token_type: String,
-    scope: String,
-    expires_in: u32,
     refresh_token: String,
 }
 
