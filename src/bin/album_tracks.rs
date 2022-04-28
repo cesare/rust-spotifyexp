@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
 
     let response = list_tracks(&config, &arguments.album_id).await?;
     for track in response.items.iter() {
-        show_track(&track);
+        show_track(track);
     }
 
     Ok(())

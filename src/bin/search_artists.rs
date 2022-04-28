@@ -20,7 +20,7 @@ fn show_artist(artist: &Artist) {
 
 fn show_results(response: &SearchArtistsResponse) {
     for artist in response.artists.items.iter() {
-        show_artist(&artist);
+        show_artist(artist);
     }
 }
 

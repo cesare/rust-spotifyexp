@@ -254,7 +254,7 @@ pub async fn is_playing(config: &Rc<SpotifyConfig>) -> Result<bool> {
 
 pub async fn enqueue_tracks(config: &Rc<SpotifyConfig>, device_id: &str, track_uris: Vec<String>) -> Result<()> {
     for uri in track_uris.iter() {
-        EnqueueTrack::new(&config, device_id, &uri)
+        EnqueueTrack::new(config, device_id, uri)
             .execute()
             .await?;
     }
@@ -269,19 +269,19 @@ pub async fn skip_to_next(config: &Rc<SpotifyConfig>, device_id: &str) -> Result
 }
 
 pub async fn start_playing(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
-    StartPlaying::new(&config, &device_id)
+    StartPlaying::new(config, device_id)
         .execute()
         .await
 }
 
 pub async fn playback(config: &Rc<SpotifyConfig>, device_id: &str, uri: &str) -> Result<()> {
-    Playback::new(&config, &device_id, &uri)
+    Playback::new(config, device_id, uri)
         .execute()
         .await
 }
 
 pub async fn pause(config: &Rc<SpotifyConfig>, device_id: &str) -> Result<()> {
-    PausePlayback::new(&config, &device_id)
+    PausePlayback::new(config, device_id)
         .execute()
         .await
 }

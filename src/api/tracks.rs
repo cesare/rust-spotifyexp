@@ -43,7 +43,7 @@ impl ListTracks {
 }
 
 pub async fn list_tracks(config: &Rc<SpotifyConfig>, album_id: &str) -> Result<ListTracksResponse> {
-    ListTracks::new(&config, &album_id)
+    ListTracks::new(config, album_id)
         .execute()
         .await
 }

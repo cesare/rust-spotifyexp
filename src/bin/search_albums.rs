@@ -20,7 +20,7 @@ fn show_album(album: &Album) {
 
 fn show_results(response: &SearchAlbumsResponse) {
     for album in response.albums.items.iter() {
-        show_album(&album);
+        show_album(album);
     }
 }
 
