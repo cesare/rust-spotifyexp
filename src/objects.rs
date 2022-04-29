@@ -55,19 +55,19 @@ pub type ListTracksResponse = Paging<Track>;
 
 #[derive(Debug, Deserialize)]
 pub struct ListDevicesResponse {
-    devices: Vec<Device>,
+    pub devices: Vec<Device>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Device {
-    id: String,
-    is_active: bool,
-    is_private_session: bool,
-    is_restricted: bool,
-    name: String,
+    pub id: String,
+    pub is_active: bool,
+    pub is_private_session: bool,
+    pub is_restricted: bool,
+    pub name: String,
     #[serde(rename = "type")]
-    device_type: String,
-    volume_percent: u32,
+    pub device_type: String,
+    pub volume_percent: u32,
 }
 
 #[derive(Debug, Deserialize)]
